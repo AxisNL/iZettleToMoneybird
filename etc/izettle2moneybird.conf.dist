@@ -5,11 +5,11 @@ ClientId = iZettle API Client Id
 ClientSecret = iZettle API Client secret
 
 [Moneybird]
-token = Moneybird API token
-administratie_id = Id van de boekhouding
-contact_id_passant = Id van de contact waarop alle sales geboekt worden (suggestie: maak een contact 'passant' aan.
-contact_id_izettle = Id van de contact 'iZettle' voor de inkoopfacturen van de administratiekosten.
-rekening_id_izettle = Id van de kostenrekening voor de administratiekosten (bijvoorbeeld 'bankkosten')
-taxrate_id_inkoop_geen_btw = Id van de BTW categorie 'geen BTW' voor de iZettle inkoopfacturen.
-rekening_id_kruisposten = Id van de rekening 'kruisposten' om geld over te boeken tussen rekeningen
-rekening_id_izettle = Id van de bankrekening iZettle.
+token = 1234567890asdfghjkl1234567890
+administratie_id = 1234567890
+contact_passant = Passant
+contact_izettle = iZettle
+ledger_bankkosten = Bankkosten
+ledger_kruisposten = Kruisposten
+financial_account_izettle = iZettle rekeningnaam
+grootboekrekening_omzet = Omzet

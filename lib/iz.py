@@ -145,6 +145,24 @@ def GetTransactions():
     return data
 
 
+def LookupSalesPaymentUuid(izSalesNumber):
+    sales = GetPurchases()
+    for sale in sales:
+        if numericEqual(sale['globalPurchaseNumber'], izSalesNumber):
+            payments = sale['payments']
+            if len(payments) != 1:
+                logging.error("The iZettle purchase/sale with number {0} has != 1 payment!".format(izSalesNumber))
+            return payments[0]['uuid']
+    return None
+
+
+def numericEqual(x, y, epsilon=1 * 10 ** (-8)):
+    """Return True if two values are close in numeric value
+        By default close is withing 1*10^-8 of each other
+        i.e. 0.00000001
+    """
+    return abs(x - y) <= epsilon
+
 # this code will only be run if this script is run directly
 if __name__ == '__main__':
     print(json.dumps(GetMyInfo(), indent=2, sort_keys=True))
