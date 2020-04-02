@@ -1,0 +1,6 @@
+etc/izettle2moneybird.conf
+.idea/
+debug/
+lib/__pycache__/
+var/
+/log/izettle2moneybird.log
