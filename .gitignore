@@ -2,5 +2,5 @@ etc/izettle2moneybird.conf
 .idea/
 debug/
 lib/__pycache__/
-var/
+var/*.json
 /log/izettle2moneybird.log

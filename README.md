@@ -51,12 +51,12 @@ de rekening kruisposten op 0 moeten blijven!
 
 Je kunt het script bijvoorbeeld uitvoeren met:
 
-    python iz2mb.py
+    python izettle2moneybird.py
     
 Je kunt nog specifieker zijn. Met de optie -n bijvoorbeeld, zorg je dat het script alleen in read-only modus draait en dus eerst laat zien wat er zou gebeuren, maar het past verder niets aan. Je kunt ook een handmatige begin- en einddatum opgeven.
 
 
-    usage: iz2mb.py [-h] [-n] [-v] [--startdate STARTDATESTRING]
+    usage: izettle2moneybird.py [-h] [-n] [-v] [--startdate STARTDATESTRING]
                     [--enddate ENDDATESTRING]
     
     Sync iZettle to your Moneybird account.
