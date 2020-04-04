@@ -72,8 +72,12 @@ def LookupTaxrateIdPurchase(percentage):
         data = json.load(json_file)
     for tax_rate in data:
         if tax_rate["tax_rate_type"] == "purchase_invoice":
-            if numericEqual(tax_rate['percentage'], percentage):
-                return tax_rate['id']
+            try:
+                if numericEqual(tax_rate['percentage'], percentage):
+                    return tax_rate['id']
+            except:
+                logging.error("There was a problem comparing tax rate percentage '{0}'".format(percentage))
+
     logging.error("Could not lookup tax rate with percentage '{0}' (watch out, case sensitive!)".format(percentage))
     exit(1)
 
@@ -162,7 +166,7 @@ def DownloadFinanancialMutations(startdate, enddate):
         number_of_splits = math.ceil(len(o) / 100)
         # split up into chunks
         chunks = numpy.array_split(o, number_of_splits)
-    
+
         for chunk in chunks:
             idlistforthischunk = []
             for item in chunk:
