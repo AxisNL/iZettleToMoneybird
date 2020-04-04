@@ -129,7 +129,7 @@ for izPurchase in iz.GetPurchases():
                 quantity = int(izProduct['quantity'])
                 totalproductcents = unitPriceCents * quantity
                 totalproductamount = decimal.Decimal(totalproductcents / 100.0)
-                products = {"description": izProduct['description'],
+                products = {"description": izProduct['name'],
                             "price": totalproductamount,
                             "tax_rate": izProduct['vatPercentage']
                             }
