@@ -154,23 +154,24 @@ def DownloadFinanancialMutations(startdate, enddate):
         json.dump(o, outfile, indent=4, sort_keys=True)
     logging.info('Downloaded Moneybird financial mutations sync ({0} items)'.format(len(o)))
 
-    # we can only download up to a 100 mutations at once. See how many requests we need
-    number_of_splits = math.ceil(len(o) / 100)
-    # split up into chunks
-    chunks = numpy.array_split(o, number_of_splits)
-
     # store result
     financial_mutations = []
 
-    for chunk in chunks:
-        idlistforthischunk = []
-        for item in chunk:
-            idlistforthischunk.append(item['id'])
-        postObj = {"ids": idlistforthischunk}
-        url = "https://moneybird.com/api/v2/{0}/financial_mutations/synchronization.json".format(administratie_id)
-        o = MakePostRequest(url, postObj)
-        for financial_mutation in o:
-            financial_mutations.append(financial_mutation)
+    if len(o) > 0:
+        # we can only download up to a 100 mutations at once. See how many requests we need
+        number_of_splits = math.ceil(len(o) / 100)
+        # split up into chunks
+        chunks = numpy.array_split(o, number_of_splits)
+    
+        for chunk in chunks:
+            idlistforthischunk = []
+            for item in chunk:
+                idlistforthischunk.append(item['id'])
+            postObj = {"ids": idlistforthischunk}
+            url = "https://moneybird.com/api/v2/{0}/financial_mutations/synchronization.json".format(administratie_id)
+            o = MakePostRequest(url, postObj)
+            for financial_mutation in o:
+                financial_mutations.append(financial_mutation)
 
     with open(store_financial_mutations, 'w') as outfile:
         json.dump(financial_mutations, outfile, indent=4, sort_keys=True)
