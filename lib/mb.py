@@ -67,12 +67,15 @@ def numericEqual(x, y, epsilon=1 * 10 ** (-8)):
     return abs(x - y) <= epsilon
 
 
-def LookupTaxrateIdPurchase(percentage):
+def LookupTaxrateId(tax_rate_type, percentage):
     with open(store_tax_rates) as json_file:
         data = json.load(json_file)
     for tax_rate in data:
-        if tax_rate["tax_rate_type"] == "purchase_invoice":
+        if tax_rate["tax_rate_type"] == tax_rate_type:
             if percentage == 0:
+                if tax_rate['name'] == "Geen btw":
+                    return tax_rate['id']
+            if percentage == 0.0:
                 if tax_rate['name'] == "Geen btw":
                     return tax_rate['id']
             try:
@@ -85,20 +88,43 @@ def LookupTaxrateIdPurchase(percentage):
     exit(1)
 
 
+def LookupTaxrateIdPurchase(percentage):
+    return LookupTaxrateId("purchase_invoice", percentage)
+    #
+    #     with open(store_tax_rates) as json_file:
+    #     data = json.load(json_file)
+    # for tax_rate in data:
+    #     if tax_rate["tax_rate_type"] == "purchase_invoice":
+    #         if percentage == 0:
+    #             if tax_rate['name'] == "Geen btw":
+    #                 return tax_rate['id']
+    #         else:
+    #             try:
+    #                 if numericEqual(tax_rate['percentage'], percentage):
+    #                     return tax_rate['id']
+    #             except:
+    #                 logging.error("There was a problem comparing tax rate percentage '{0}' with another numeric value".format(percentage))
+    #
+    # logging.error("Could not lookup tax rate with percentage '{0}' (watch out, case sensitive!)".format(percentage))
+    # exit(1)
+
+
 def LookupTaxrateIdSales(percentage):
-    with open(store_tax_rates) as json_file:
-        data = json.load(json_file)
-    for tax_rate in data:
-        if tax_rate["tax_rate_type"] == "sales_invoice":
-            if numericEqual(percentage, 0):
-                if tax_rate['name'] == "Geen btw":
-                    return tax_rate['id']
-            else:
-                mbTaxRatePercentage = float(tax_rate['percentage'])
-                if numericEqual(mbTaxRatePercentage, percentage):
-                    return tax_rate['id']
-    logging.error("Could not lookup tax rate with percentage '{0}' (watch out, case sensitive!)".format(percentage))
-    exit(1)
+    return LookupTaxrateId("sales_invoice", percentage)
+    #
+    # with open(store_tax_rates) as json_file:
+    #     data = json.load(json_file)
+    # for tax_rate in data:
+    #     if tax_rate["tax_rate_type"] == "sales_invoice":
+    #         if numericEqual(percentage, 0):
+    #             if tax_rate['name'] == "Geen btw":
+    #                 return tax_rate['id']
+    #         else:
+    #             mbTaxRatePercentage = float(tax_rate['percentage'])
+    #             if numericEqual(mbTaxRatePercentage, percentage):
+    #                 return tax_rate['id']
+    # logging.error("Could not lookup tax rate with percentage '{0}' (watch out, case sensitive!)".format(percentage))
+    # exit(1)
 
 
 def DownloadContacts():
