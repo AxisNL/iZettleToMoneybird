@@ -81,8 +81,9 @@ def LookupTaxrateId(tax_rate_type, percentage):
                 if tax_rate['name'] == "Geen btw":
                     return tax_rate['id']
             try:
-                if numericEqual(tax_rate['percentage'], percentage):
-                    return tax_rate['id']
+                if tax_rate['percentage'] is not None:
+                    if numericEqual(tax_rate['percentage'], percentage):
+                        return tax_rate['id']
             except:
                 logging.error("There was a problem comparing tax rate percentage '{0}' with another numeric value".format(percentage))
 
