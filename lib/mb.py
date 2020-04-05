@@ -87,7 +87,7 @@ def LookupTaxrateIdSales(percentage):
         data = json.load(json_file)
     for tax_rate in data:
         if tax_rate["tax_rate_type"] == "sales_invoice":
-            if tax_rate['percentage'] is None:
+            if numericEqual(percentage, 0):
                 if tax_rate['name'] == "Geen btw":
                     return tax_rate['id']
             else:
