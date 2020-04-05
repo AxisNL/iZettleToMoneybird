@@ -212,7 +212,7 @@ for izTransaction in iz.GetTransactions():
             if flagNoop:
                 logger.info("Noop: should create purchase invoice {0}, but in read-only mode".format(fmreference))
             else:
-                mb.AddPurchaseInvoice(fmreference, timestamp, amount_dec)
+                mb.AddPurchaseInvoice(purchasereference, timestamp, amount_dec)
                 logger.info("Created purchase invoice ({0}".format(fmreference))
                 flagPurchaseInvoicesChanged = True
 
