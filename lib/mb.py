@@ -81,12 +81,12 @@ def LookupTaxrateId(tax_rate_type, percentage):
             if percentage == 0.0:
                 if tax_rate['name'] == "Geen btw":
                     return tax_rate['id']
-            try:
-                if tax_rate['percentage'] is not None:
-                    if numericEqual(tax_rate['percentage'], percentage):
+            if tax_rate['percentage'] is not None:
+                try:
+                    if numericEqual(float(tax_rate['percentage']), percentage):
                         return tax_rate['id']
-            except:
-                logging.error("There was a problem comparing tax rate percentage '{0}' with value {0} from json".format(percentage, tax_rate['percentage']))
+                except:
+                    logging.exception("There was a problem comparing tax rate percentage '{0}' with value {1} from json.".format(percentage, tax_rate['percentage']))
 
     logging.error("Could not lookup tax rate with percentage '{0}' (watch out, case sensitive!)".format(percentage))
     exit(1)
