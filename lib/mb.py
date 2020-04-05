@@ -72,11 +72,14 @@ def LookupTaxrateIdPurchase(percentage):
         data = json.load(json_file)
     for tax_rate in data:
         if tax_rate["tax_rate_type"] == "purchase_invoice":
+            if percentage == 0:
+                if tax_rate['name'] == "Geen btw":
+                    return tax_rate['id']
             try:
                 if numericEqual(tax_rate['percentage'], percentage):
                     return tax_rate['id']
             except:
-                logging.error("There was a problem comparing tax rate percentage '{0}'".format(percentage))
+                logging.error("There was a problem comparing tax rate percentage '{0}' with another numeric value".format(percentage))
 
     logging.error("Could not lookup tax rate with percentage '{0}' (watch out, case sensitive!)".format(percentage))
     exit(1)
