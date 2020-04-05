@@ -68,13 +68,15 @@ def numericEqual(x, y, epsilon=1 * 10 ** (-8)):
 
 
 def LookupTaxrateId(tax_rate_type, percentage):
+    try:
+        percentage = float(percentage)
+    except:
+        logging.error("Can not convert value '{0}' to float".format(percentage))
+
     with open(store_tax_rates) as json_file:
         data = json.load(json_file)
     for tax_rate in data:
         if tax_rate["tax_rate_type"] == tax_rate_type:
-            if percentage == 0:
-                if tax_rate['name'] == "Geen btw":
-                    return tax_rate['id']
             if percentage == 0.0:
                 if tax_rate['name'] == "Geen btw":
                     return tax_rate['id']
