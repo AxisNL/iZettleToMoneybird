@@ -163,61 +163,73 @@ for izTransaction in iz.GetTransactions():
     trans_orig_uuid = izTransaction['originatingTransactionUuid']
     fmreference = "IZETTLE_{0}_{1}_{2}".format(transactioncode, izTransaction['timestamp'], trans_orig_uuid)
 
-    if transactioncode not in ['CARD_PAYMENT', 'CARD_PAYMENT_FEE', 'PAYOUT']:
-        logger.error("Transaction code {0} not handled!".format(transactioncode))
-        exit(1)
+    ProcessThisTransaction = False
+    IgnoreUnhandled = config['iZettle']['Ignore_Unhandled_Transaction_Codes']
 
-    amount_cents = int(izTransaction['amount'])
-    # always get a positive number to work with
-    if amount_cents < 0:
-        amount_cents = 0 - amount_cents
-    amount_dec = decimal.Decimal(amount_cents / 100.0)
-
-    timestamp = dateutil.parser.parse(izTransaction['timestamp'])
-
-    ##############################
-    # Check the financial statements
-    ##############################
-    flagFinancialMutationFound = False
-    for mbFinancialMutation in mb.GetFinancialMutations():
-        if mbFinancialMutation['message'] == fmreference:
-            flagFinancialMutationFound = True
-
-    if not flagFinancialMutationFound:
-        if flagNoop:
-            logger.info("NOOP: should create financial statement {0}, but in read-only mode.".format(fmreference))
+    if transactioncode in ['CARD_PAYMENT', 'CARD_PAYMENT_FEE', 'PAYOUT']:
+        ProcessThisTransaction = True
+    else:
+        ProcessThisTransaction = False
+        if IgnoreUnhandled:
+            # We can't process this type of transaction, but our program should keep running
+            logger.warn("Ignoring unhandled transaction code {0}".format(transactioncode))
         else:
-            mb.AddFinancialStatementAndMutation(fmreference, transactioncode, timestamp, amount_dec)
-            logger.info("Created financial statement ({0}".format(fmreference))
-            flagFinancialStatementsChanged = True
+            # We can't process this type of transaction, and our program should exit
+            logger.error("Transaction code {0} not handled!".format(transactioncode))
+            exit(10)
 
-    if flagFinancialMutationFound:
-        logger.debug("Financial statement already exists ({0})".format(fmreference))
+    if ProcessThisTransaction:
+        amount_cents = int(izTransaction['amount'])
+        # always get a positive number to work with
+        if amount_cents < 0:
+            amount_cents = 0 - amount_cents
+        amount_dec = decimal.Decimal(amount_cents / 100.0)
 
-    ##############################
-    # Create purchase invoices
-    ##############################
-    if transactioncode == 'CARD_PAYMENT_FEE':
+        timestamp = dateutil.parser.parse(izTransaction['timestamp'])
 
-        # ###############################################
-        # check if we have a purchase invoice
-        purchasereference = "Izettle inkoop {0}".format(trans_orig_uuid)
+        ##############################
+        # Check the financial statements
+        ##############################
+        flagFinancialMutationFound = False
+        for mbFinancialMutation in mb.GetFinancialMutations():
+            if mbFinancialMutation['message'] == fmreference:
+                flagFinancialMutationFound = True
 
-        flagPurchaseInvoiceFound = False
-        for mbPurchaseinvoice in mb.GetPurchaseInvoices():
-            if mbPurchaseinvoice['reference'] == purchasereference:
-                flagPurchaseInvoiceFound = True
-
-        if not flagPurchaseInvoiceFound:
+        if not flagFinancialMutationFound:
             if flagNoop:
-                logger.info("Noop: should create purchase invoice {0}, but in read-only mode".format(fmreference))
+                logger.info("NOOP: should create financial statement {0}, but in read-only mode.".format(fmreference))
             else:
-                mb.AddPurchaseInvoice(purchasereference, timestamp, amount_dec)
-                logger.info("Created purchase invoice ({0}".format(fmreference))
-                flagPurchaseInvoicesChanged = True
+                mb.AddFinancialStatementAndMutation(fmreference, transactioncode, timestamp, amount_dec)
+                logger.info("Created financial statement ({0}".format(fmreference))
+                flagFinancialStatementsChanged = True
 
-        if flagPurchaseInvoiceFound:
-            logger.debug("Purchase invoice already exists ({0})".format(purchasereference))
+        if flagFinancialMutationFound:
+            logger.debug("Financial statement already exists ({0})".format(fmreference))
+
+        ##############################
+        # Create purchase invoices
+        ##############################
+        if transactioncode == 'CARD_PAYMENT_FEE':
+
+            # ###############################################
+            # check if we have a purchase invoice
+            purchasereference = "Izettle inkoop {0}".format(trans_orig_uuid)
+
+            flagPurchaseInvoiceFound = False
+            for mbPurchaseinvoice in mb.GetPurchaseInvoices():
+                if mbPurchaseinvoice['reference'] == purchasereference:
+                    flagPurchaseInvoiceFound = True
+
+            if not flagPurchaseInvoiceFound:
+                if flagNoop:
+                    logger.info("Noop: should create purchase invoice {0}, but in read-only mode".format(fmreference))
+                else:
+                    mb.AddPurchaseInvoice(purchasereference, timestamp, amount_dec)
+                    logger.info("Created purchase invoice ({0}".format(fmreference))
+                    flagPurchaseInvoicesChanged = True
+
+            if flagPurchaseInvoiceFound:
+                logger.debug("Purchase invoice already exists ({0})".format(purchasereference))
 
 if flagPurchaseInvoicesChanged:
     logging.info("Purchase invoices were changed, re-downloading")

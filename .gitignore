@@ -4,3 +4,4 @@ debug/
 lib/__pycache__/
 var/*.json
 /log/izettle2moneybird.log
+/venv/

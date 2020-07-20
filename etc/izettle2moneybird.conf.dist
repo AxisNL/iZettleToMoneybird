@@ -3,6 +3,7 @@ Username = iZettle username
 Password = iZettle password
 ClientId = iZettle API Client Id
 ClientSecret = iZettle API Client secret
+Ignore_Unhandled_Transaction_Codes = no
 
 [Moneybird]
 token = 1234567890asdfghjkl1234567890
